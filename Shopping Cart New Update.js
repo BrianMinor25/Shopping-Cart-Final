@@ -18,33 +18,73 @@ var textbook = {
 }
 var itemsArray = [calendar, bookbag, textbook];
 
-/* 9. This reoves an item from the shopping cart*/
-var removeItem = function(anItemArray2, item)
+var exitProgram = function ()
 {
-  for (var i = 0; i < anItemArray2.length; i--)
-  {
-    if (anItemArray2[i].name === item.name)
-    {
-      anItemArray2[i].count--;
-      console.log("Added another " + item.name + " to your cart!");
-      console.log(anItemArray2);
-      return;
-    }
+ window.stop();
+}
+/* 15. Checks to see if user wants to go back through shopping cart again.*/
+var finalCheck = function ()
+{
+  var check = prompt("Would you like to input anymore items? If not, we will exit the program. y/n")
+  if (check === "y" || check === "Y"){
+    decideWhatToAdd();
+  }
+  else{
+    console.log("ending program");
+    return -1;
   }
 }
 
-/* 8. This handles the user's response to REMOVING items.*/
+/* 14. Checks if the total is greater or less than $100.*/
+var totalCheck = function ()
+{
+  {
+  var tax = 0;
+  var total = 0;
+  var totalPlusTax=0;
+  for(var i=0; i<= itemsArray.length -1; i++){
+  tax += (parseFloat(itemsArray[i].price) * parseFloat(itemsArray[i].count) * .075);
+  }
+  for(var i=0; i<= itemsArray.length -1; i++){
+  total += (parseFloat(itemsArray[i].price) * parseFloat(itemsArray[i].count));
+  }
+  totalPlusTax = total + tax;
+  }
+  if(totalPlusTax < 100){
+    alert("Your subtotal is $" + total + "\nYour total with tax is $" + (totalPlusTax.toFixed(2)) + ".\nSince your total is less than $100, cash payment is required.");
+  }
+  else{
+    alert("Your subtotal is $" + total + "\nYour total with tax is $" + (totalPlusTax.toFixed(2)) + ".\nSince your total is greater than $100, a credit card can be set up.");
+  }
+  finalCheck();
+}
+
+/* 13. Makes sure price doesn't get below 0.*/
+var checkArray = function ()
+{
+  if (itemsArray[i].length = 0){
+    alert("thing")
+  }
+  else{
+    alert("other thing")
+  }
+}
+
+/* 12. This handles the user's response to removing MORE items.*/
 var removeMoreItems = function ()
 {
   var temp = true;
-   var askToRemove = prompt("Would you like to REMOVE items from your cart? y/n");
+   var askToRemove = prompt("Would you like to remove an item from your cart? y/n");
    if (askToRemove === "y" || askToRemove === "Y")
   {
-    cartManager(temp);
+    removeFromCart(temp);
   }
   else if (askToRemove === "n" || askToRemove === "N")
   {
-    alert("Alright. We won't delete anymore items.");
+    alert("Alright. We won't remove anymore items.");
+    //removeMoreItems();
+    totalCheck();
+    console.log(itemsArray);
   }
   else
   {
@@ -53,28 +93,61 @@ var removeMoreItems = function ()
   }
 }
 
-/* 7. This handles the user's response to adding MORE items.*/
-var addMoreItems = function ()
+/* 11. This handles the actual process of removing items from the cart array.*/
+var removeItem = function(anItemArray, item)
 {
-  var temp = true;
-   var askForMore = prompt("Would you like to add MORE items to your cart? y/n");
-   if (askForMore === "y" || askForMore === "Y")
+  for (var i = 0; i < anItemArray.length; i++)
   {
-    cartManager(temp);
-  }
-  else if (askForMore === "n" || askForMore === "N")
-  {
-    alert("Alright. We won't add anymore items.");
-  }
-  else
-  {
-    alert(askForMore + " is not a valid response!");
-    addMoreItems();
+    if (anItemArray[i].name === item.name)
+    {
+      anItemArray[i].count--;
+      console.log("Removed another " + item.name + " from your cart!");
+      console.log(anItemArray);
+      return;
+    }
   }
 }
 
-/* 6. This functions handles WHEN to call the other functions.*/
-var cartManager = function(trueOrFalse)
+/* 10. This prompts the user to remove items.*/
+var decideWhatToRemove = function ()
+{
+  var userInput = prompt("CALENDAR - $5\nBOOKBAG - $10\nTEXTBOOK - $20\nPlease enter the name of the item to remove it to your cart.\nType -1 to continue.");
+  var userInputUpper = userInput.toUpperCase(); // Capitalizing whatever the user inputs.
+
+  if(userInputUpper === "-1")
+  {
+    currentCart();
+    return (-1); // End the program.
+  }
+  else if(userInputUpper === "BOOKBAG")
+  {
+    if(bookbag.count > 0){
+      removeItem(itemsArray, bookbag);
+      currentCart();
+    }
+    else{
+      alert("This item does not exist in your cart! We can't remove it.")
+    }
+  }
+  else if(userInputUpper === "CALENDAR")
+  {
+    removeItem(itemsArray, calendar);
+    currentCart();
+  }
+  else if(userInputUpper === "TEXTBOOK")
+  {
+    removeItem(itemsArray, textbook);
+    currentCart();
+  }
+  else
+  {
+    alert(userInputUpper + " is not a valid value! Try again.")
+    decideWhatToRemove();
+  }
+}
+
+/* 9. This functions handles WHEN to call the other functions (in regards to removing).*/
+var removeFromCart = function(trueOrFalse)
 {
   var keepGoing = trueOrFalse;
 
@@ -82,10 +155,36 @@ var cartManager = function(trueOrFalse)
   {
     console.log("Entered while statement.");
 
-    if(decideWhatToAdd() === -1) // We want the while statement to end.
+    if(decideWhatToRemove() === -1) // We want the while statement to end.
     {
+      currentCart();
       return;
     }
+    removeMoreItems();
+  }
+}
+
+
+
+
+
+/* 7. This handles the user's response to adding MORE items.*/
+var addMoreItems = function ()
+{
+  var temp = true;
+   var askForMore = prompt("Would you like to add an item to your cart? y/n");
+   if (askForMore === "y" || askForMore === "Y")
+  {
+    addToCart(temp);
+  }
+  else if (askForMore === "n" || askForMore === "N")
+  {
+    alert("Alright. We won't add more items.");
+    removeMoreItems();
+  }
+  else
+  {
+    alert(askForMore + " is not a valid response!");
     addMoreItems();
   }
 }
@@ -108,25 +207,29 @@ var addItem = function(anItemArray, item)
 /* 4. This prompts the user to input items from the alert.*/
 var decideWhatToAdd = function ()
 {
-  var userInput = prompt("CALENDAR - $5\nBOOKBAG - $10\nTEXTBOOK - $20\nPlease enter the name of the item to add it to your cart.\nType -1 to exit");
+  var userInput = prompt("CALENDAR - $5\nBOOKBAG - $10\nTEXTBOOK - $20\nPlease enter the name of the item to add it to your cart.\nType -1 to continue.");
   var userInputUpper = userInput.toUpperCase(); // Capitalizing whatever the user inputs.
 
   if(userInputUpper === "-1")
   {
-    alert("Very well then! Here is your total list of items.");
+    currentCart();
+    removeMoreItems();
     return (-1); // End the program.
   }
   else if(userInputUpper === "BOOKBAG")
   {
     addItem(itemsArray, bookbag);
+    currentCart();
   }
   else if(userInputUpper === "CALENDAR")
   {
     addItem(itemsArray, calendar);
+    currentCart();
   }
   else if(userInputUpper === "TEXTBOOK")
   {
     addItem(itemsArray, textbook);
+    currentCart();
   }
   else
   {
@@ -136,7 +239,7 @@ var decideWhatToAdd = function ()
 }
 
 /* 3. This functions handles WHEN to call the other functions.*/
-var cartManager = function(trueOrFalse)
+var addToCart = function(trueOrFalse)
 {
   var keepGoing = trueOrFalse;
 
@@ -164,11 +267,11 @@ var decideToRunProgram = function()
   }
   else if(userReady === "n" || userReady === "N")
   {
-    alert("Very well then. Goodbye!"); // Doesn't make run equal true, so the cartManager never gets called.
+    alert("Very well then. Goodbye!"); // Doesn't make run equal true, so the addToCart never gets called.
   }
   else
   {
-    alert("It seems you did not put in a real value, so we'll assume no. Goodbye!"); // Doesn't make run equal true, so the cartManager never gets called.
+    alert("It seems you did not put in a real value, so we'll assume no. Goodbye!"); // Doesn't make run equal true, so the addToCart never gets called.
   }
   return run;
 }
@@ -182,7 +285,24 @@ var startCaller = function()
   var runProgram = decideToRunProgram(); // 1. Stores whatever the user entered: if they decided to start the program, this is true; it's false otherwise.
   if (runProgram === true)
   {
-    cartManager(what); // 2. If their response was true, we'll start the whole cart managing process, otherwise function will end naturally.
+    addToCart(what); // 2. If their response was true, we'll start the whole cart managing process, otherwise function will end naturally.
   }
 }
+
+/*This finds the math for the total and total plus tax.*/
+var currentCart = function()
+{
+  var tax = 0;
+  var total = 0;
+  var totalPlusTax=0;
+  for(var i=0; i<= itemsArray.length -1; i++){
+  tax += (parseFloat(itemsArray[i].price) * parseFloat(itemsArray[i].count) * .075);
+}
+  for(var i=0; i<= itemsArray.length -1; i++){
+  total += (parseFloat(itemsArray[i].price) * parseFloat(itemsArray[i].count));
+}
+  totalPlusTax = total + tax;
+  alert("Your subtotal is $" + (total.toFixed(2)) + "\nYour total with tax is $" + (totalPlusTax.toFixed(2)));
+}
+
 startCaller();
